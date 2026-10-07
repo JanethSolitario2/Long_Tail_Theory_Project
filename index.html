@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTA Long Tail Theory Blind Box</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6; 
+            --accent-color: #f97316; 
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --glass-bg: #ffffff;
+            --glass-border: #e2e8f0;
+            --border-radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 1.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899, #f97316);
+            background-size: 300% 300%;
+            animation: ombreBox 8s ease infinite;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        @keyframes ombreBox {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .app-container.result-state {
+            background: #f1f5f9; /* Muted light gray */
+            animation: none;
+            color: var(--text-main);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .app-container.result-state h1, 
+        .app-container.result-state .voting-section p {
+            color: var(--text-main);
+        }
+
+        .app-container.result-state .voting-section {
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .app-container.result-state #tap-to-continue {
+            color: var(--text-light);
+        }
+
+        .logo-emoji {
+            font-size: 3.5rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        h1 {
+            font-size: 1.7rem;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .title-line-1 {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.25rem;
+        }
+
+        .title-line-2 {
+            display: block;
+            font-size: 2.6rem;
+            font-weight: 900;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .title-line-3 {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        #screen-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
+            border-radius: var(--border-radius);
+        }
+
+        .box-container {
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .box-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .box-icon {
+            font-size: 5rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(8deg) scale(1.05); }
+            50% { transform: rotate(0deg) scale(1.05); }
+            75% { transform: rotate(-8deg) scale(1.05); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .shaking {
+            animation: shake 0.4s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+            border-color: #ffffff;
+        }
+
+        #screen-result {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .item-container {
+            padding: 2.5rem 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+
+        .item-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .item-emoji-display {
+            font-size: 5.5rem;
+            line-height: 1.2;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+            margin: 1rem 0;
+        }
+
+        .item-type-label {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .item-type-label.show {
+            opacity: 1;
+        }
+
+        .theme-head {
+            border: 2px solid #38bdf8;
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
+        }
+
+        .theme-tail {
+            border: 2px solid #fb923c;
+            box-shadow: 0 8px 25px rgba(251, 146, 60, 0.15);
+        }
+
+        .voting-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            padding-top: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .vote-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .vote-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 14px;
+            border: 2px solid #cbd5e1;
+            background: #ffffff;
+            color: var(--text-main);
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vote-btn:disabled {
+            cursor: default;
+        }
+
+        .vote-btn.correct {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
+        }
+
+        .vote-btn.incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
+        }
+
+        .vote-btn.pop-out {
+            transform: scale(1.08);
+            z-index: 10;
+            border-width: 2px;
+            box-shadow: 0 12px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        #explanation {
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--accent-color);
+            padding: 1.25rem;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #334155;
+            border-radius: 0 12px 12px 0;
+            animation: fadeIn 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="screen-box" role="button" tabindex="0" aria-label="Open Mystery Box">
+            <div>
+                <div class="logo-emoji">🐎</div>
+                <h1 style="margin-bottom: 1.5rem; line-height: 1.1;">
+                    <span class="title-line-1">UTA</span>
+                    <span class="title-line-2">Long Tail Theory</span>
+                    <span class="title-line-3">Blind Box</span>
+                </h1>
+                <p class="subtitle">Reveal your item & guess the demand!</p>
+            </div>
+            
+            <div class="box-container" id="mystery-box">
+                <span class="box-icon">📦</span>
+            </div>
+            <p style="color: rgba(255,255,255,0.8); font-weight: 600; margin-top: 1rem; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem;">Tap to open!</p>
+        </div>
+
+        <div id="screen-result">
+            <div>
+                <h1 style="font-size: 1.5rem;">What's inside?</h1>
+            </div>
+
+            <div id="item-card" class="item-container">
+                <h2 id="item-name" class="item-title">Item Name</h2>
+                <div id="item-emoji" class="item-emoji-display">📦</div>
+                <div id="item-label" class="item-type-label">Common Item</div>
+            </div>
+
+            <div class="voting-section">
+                <p style="font-weight: 600; margin-bottom: 0.75rem; font-size: 0.95rem;">Where does this belong on the demand curve?</p>
+                <div class="vote-buttons">
+                    <button class="vote-btn" id="btn-head">The Head</button>
+                    <button class="vote-btn" id="btn-tail">The Tail</button>
+                </div>
+                
+                <div id="explanation"></div>
+            </div>
+
+            <div id="tap-to-continue" style="display: none; text-align: center; margin-top: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; cursor: pointer; animation: fadeIn 0.5s ease-out;">
+                Tap anywhere to open another box 🔄
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const items = [
+            { name: "Standard iPhone Case", emoji: "📱", type: "head", label: "Common Item" },
+            { name: "Bottled Water", emoji: "💧", type: "head", label: "Common Item" },
+            { name: "AA Batteries", emoji: "🔋", type: "head", label: "Common Item" },
+            { name: "White Athletic Socks", emoji: "🧦", type: "head", label: "Common Item" },
+            { name: "Yellow Pencils", emoji: "✏️", type: "head", label: "Common Item" },
+            { name: "Left-Handed Banjo", emoji: "🪕", type: "tail", label: "Niche Item" },
+            { name: "Corgi Raincoat", emoji: "🐕", type: "tail", label: "Niche Item" },
+            { name: "Arcade Joystick Parts", emoji: "🕹️", type: "tail", label: "Niche Item" },
+            { name: "Sourdough Starter Kit", emoji: "🍞", type: "tail", label: "Niche Item" },
+            { name: "Beekeeping Suit", emoji: "🐝", type: "tail", label: "Niche Item" },
+            { name: "Hand-Forged Katana", emoji: "🗡️", type: "tail", label: "Niche Item" },
+            { name: "Obscure Vinyl Record", emoji: "💿", type: "tail", label: "Niche Item" }
+        ];
+
+        const screenBox = document.getElementById('screen-box');
+        const screenResult = document.getElementById('screen-result');
+        const mysteryBox = document.getElementById('mystery-box');
+        
+        const itemCard = document.getElementById('item-card');
+        const itemName = document.getElementById('item-name');
+        const itemEmoji = document.getElementById('item-emoji');
+        const itemLabel = document.getElementById('item-label');
+        
+        const btnHead = document.getElementById('btn-head');
+        const btnTail = document.getElementById('btn-tail');
+        const explanation = document.getElementById('explanation');
+        const tapToContinue = document.getElementById('tap-to-continue');
+        
+        const appContainer = document.querySelector('.app-container');
+
+        let currentItem = null;
+        let availableItems = [];
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function getNextItem() {
+            if (availableItems.length === 0) {
+                availableItems = shuffleArray([...items]);
+            }
+            return availableItems.pop();
+        }
+
+        function handleBoxOpen() {
+            mysteryBox.classList.add('shaking');
+            setTimeout(() => {
+                mysteryBox.classList.remove('shaking');
+                generateResult();
+                
+                appContainer.classList.add('result-state');
+                screenBox.style.display = 'none';
+                screenResult.style.display = 'flex';
+                
+                btnHead.classList.remove('correct', 'incorrect', 'pop-out');
+                btnTail.classList.remove('correct', 'incorrect', 'pop-out');
+                btnHead.disabled = false;
+                btnTail.disabled = false;
+                explanation.style.display = 'none';
+                tapToContinue.style.display = 'none';
+            }, 600);
+        }
+
+        screenBox.addEventListener('click', handleBoxOpen);
+        screenBox.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleBoxOpen();
+            }
+        });
+
+        function generateResult() {
+            currentItem = getNextItem();
+
+            itemName.textContent = currentItem.name;
+            itemEmoji.textContent = currentItem.emoji;
+            itemLabel.textContent = currentItem.label;
+            itemLabel.classList.remove('show');
+            
+            itemCard.className = 'item-container';
+            if (currentItem.type === 'head') {
+                itemCard.classList.add('theme-head');
+            } else {
+                itemCard.classList.add('theme-tail');
+            }
+        }
+
+        function handleVote(userVote) {
+            const isCorrect = userVote === currentItem.type;
+            
+            if (userVote === 'head') {
+                btnHead.classList.add(isCorrect ? 'correct' : 'incorrect');
+            } else {
+                btnTail.classList.add(isCorrect ? 'correct' : 'incorrect');
+            }
+            
+            if (!isCorrect) {
+                if (userVote === 'head') {
+                    btnTail.classList.add('correct', 'pop-out');
+                } else {
+                    btnHead.classList.add('correct', 'pop-out');
+                }
+            }
+
+            btnHead.disabled = true;
+            btnTail.disabled = true;
+            
+            itemLabel.classList.add('show');
+            
+            if (currentItem.type === 'tail') {
+                explanation.innerHTML = `<strong>Why Amazon loves the Tail:</strong> While a physical store can't afford shelf space for a <em>${currentItem.name}</em>, Amazon's near-zero virtual storage costs and search engine connect this highly specific product to its eager worldwide buyers profitably.`;
+            } else {
+                explanation.innerHTML = `<strong>The Head of the Curve:</strong> A <em>${currentItem.name}</em> is a mass-market product. Physical stores prioritize stocking these because they have huge, predictable demand and high turnover, making them worth the valuable shelf space.`;
+            }
+            explanation.style.display = 'block';
+            
+            tapToContinue.style.display = 'block';
+            setTimeout(() => {
+                document.addEventListener('click', resetApp, { once: true });
+            }, 100);
+        }
+
+        function resetApp() {
+            appContainer.classList.remove('result-state');
+            screenResult.style.display = 'none';
+            screenBox.style.display = 'flex';
+        }
+
+        btnHead.addEventListener('click', () => handleVote('head'));
+        btnTail.addEventListener('click', () => handleVote('tail'));
+
+    </script>
+</body>
+</html>
